@@ -1,28 +1,42 @@
+# ==============================
+# Frontend
+# ==============================
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env.*.local
+
+# ==============================
+# Backend
+# ==============================
+backend/.bizdoc/
+backend/.venv/
+backend/venv/
+backend/.env
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+
+# ==============================
 # Python
-__pycache__/
+# ==============================
 *.py[cod]
+*.pyo
+*.pyd
 
-# Virtual environments
-.bizdoc/
-.venv/
-venv/
+# ==============================
+# Temporary application data
+# ==============================
+backend/uploads/
+backend/temp/
 
-# Environment variables
-.env
-
-# Tests
-.pytest_cache/
-.coverage
-htmlcov/
-
-# IDE
+# ==============================
+# Editors / OS
+# ==============================
 .vscode/
 .idea/
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Application data
-uploads/
-temp/
