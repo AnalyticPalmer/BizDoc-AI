@@ -48,12 +48,27 @@ def test_csv_upload_is_inspected_successfully() -> None:
 
     assert len(data["preview"]) == 3
 
+    assert data["mapping_summary"]["mapped_columns"] == 4
+
+    assert data["mapping_summary"]["unmapped_columns"] == 0
+
+    assert data["mapping_summary"]["coverage_percent"] == 100.0
+
+    mappings = {
+        item["original_column"]: item["canonical_field"]
+        for item in data["column_mappings"]
+    }
+
+    assert mappings["Date"] == "transaction_date"
+    assert mappings["Product"] == "product_name"
+    assert mappings["Quantity"] == "quantity"
+    assert mappings["Revenue"] == "revenue"
+
 
 def test_excel_upload_is_inspected_successfully() -> None:
     workbook = Workbook()
 
     worksheet = workbook.active
-
     worksheet.title = "Sales"
 
     worksheet.append(
@@ -84,7 +99,6 @@ def test_excel_upload_is_inspected_successfully() -> None:
     )
 
     buffer = BytesIO()
-
     workbook.save(buffer)
 
     response = client.post(
@@ -115,8 +129,10 @@ def test_excel_upload_is_inspected_successfully() -> None:
     ]
 
     assert data["row_count"] == 2
-
     assert data["column_count"] == 4
+
+    assert data["mapping_summary"]["mapped_columns"] == 4
+    assert data["mapping_summary"]["coverage_percent"] == 100.0
 
 
 def test_invalid_file_extension_is_rejected() -> None:
