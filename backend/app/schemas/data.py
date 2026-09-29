@@ -17,6 +17,16 @@ class MappingSummary(BaseModel):
 
 
 class DatasetInspectionResponse(BaseModel):
+    """
+    Response returned after a dataset has been uploaded and inspected.
+
+    dataset_id identifies the complete dataset stored by BizDoctor.
+    The frontend should use this ID for subsequent analysis instead
+    of sending only the preview rows back to the backend.
+    """
+
+    dataset_id: str
+
     filename: str
     file_type: str
 

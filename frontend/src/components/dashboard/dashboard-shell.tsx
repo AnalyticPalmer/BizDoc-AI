@@ -25,12 +25,14 @@ import {
   X,
 } from "lucide-react";
 
+import { useRouter } from "next/navigation";
+
 import ApiStatus from "@/components/api-status";
 
 type NavItem = {
   label: string;
   icon: LucideIcon;
-  active?: boolean;
+  href: string;
 };
 
 type MetricCardProps = {
@@ -50,46 +52,66 @@ const navigation: NavItem[] = [
   {
     label: "Overview",
     icon: LayoutDashboard,
-    active: true,
+    href: "/",
   },
   {
     label: "Sales Analytics",
     icon: BarChart3,
+    href: "/analytics",
   },
   {
     label: "Customers",
     icon: Users,
+    href: "/analytics",
   },
   {
     label: "Products",
     icon: PackageSearch,
+    href: "/analytics",
   },
   {
     label: "Inventory",
     icon: Boxes,
+    href: "/analytics",
   },
   {
     label: "Forecasts",
     icon: TrendingUp,
+    href: "/analytics",
   },
   {
     label: "Ask BizDoctor",
     icon: Bot,
+    href: "/analytics",
   },
   {
     label: "Reports",
     icon: FileText,
+    href: "/analytics",
   },
 ];
 
 export default function DashboardShell() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
+
+  /**
+   * Navigate to another workspace page.
+   */
+  const navigate = (href: string) => {
+    setMobileMenuOpen(false);
+    router.push(href);
+  };
 
   return (
     <div className="min-h-screen bg-[#F6F8FB] text-[#101828]">
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[272px] border-r border-[#E4E7EC] bg-white lg:flex">
-        <Sidebar />
+        <Sidebar
+          onNavigate={navigate}
+        />
       </aside>
 
       {/* Mobile sidebar */}
@@ -99,7 +121,9 @@ export default function DashboardShell() {
             type="button"
             aria-label="Close navigation overlay"
             className="fixed inset-0 z-40 bg-[#101828]/30 backdrop-blur-[1px] lg:hidden"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={() =>
+              setMobileMenuOpen(false)
+            }
           />
 
           <aside className="fixed inset-y-0 left-0 z-50 flex w-[286px] bg-white shadow-2xl lg:hidden">
@@ -107,12 +131,16 @@ export default function DashboardShell() {
               type="button"
               aria-label="Close menu"
               className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl border border-[#E4E7EC] bg-white text-[#475467]"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() =>
+                setMobileMenuOpen(false)
+              }
             >
               <X size={18} />
             </button>
 
-            <Sidebar />
+            <Sidebar
+              onNavigate={navigate}
+            />
           </aside>
         </>
       )}
@@ -126,7 +154,9 @@ export default function DashboardShell() {
                 type="button"
                 aria-label="Open navigation"
                 className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#E4E7EC] text-[#475467] lg:hidden"
-                onClick={() => setMobileMenuOpen(true)}
+                onClick={() =>
+                  setMobileMenuOpen(true)
+                }
               >
                 <Menu size={20} />
               </button>
@@ -135,8 +165,9 @@ export default function DashboardShell() {
                 <p className="text-sm font-semibold text-[#101828]">
                   Business Overview
                 </p>
+
                 <p className="hidden text-xs text-[#667085] sm:block">
-                  Demo workspace
+                  BizDoctor workspace
                 </p>
               </div>
             </div>
@@ -161,7 +192,10 @@ export default function DashboardShell() {
                   <p className="text-sm font-semibold text-[#101828]">
                     Demo Business
                   </p>
-                  <p className="text-xs text-[#667085]">Administrator</p>
+
+                  <p className="text-xs text-[#667085]">
+                    Administrator
+                  </p>
                 </div>
               </div>
             </div>
@@ -180,18 +214,23 @@ export default function DashboardShell() {
                 </div>
 
                 <h1 className="max-w-3xl text-2xl font-semibold tracking-[-0.035em] text-[#101828] sm:text-3xl">
-                  Here&apos;s how your business is performing.
+                  Here&apos;s how your business is
+                  performing.
                 </h1>
 
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[#667085] sm:text-base">
-                  Turn your sales, customer and inventory data into clear
-                  decisions and actionable insights.
+                  Turn your sales, customer and
+                  inventory data into clear decisions
+                  and actionable insights.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
+                  onClick={() =>
+                    navigate("/upload")
+                  }
                   className="flex h-11 items-center justify-center gap-2 rounded-xl border border-[#D0D5DD] bg-white px-4 text-sm font-semibold text-[#344054] shadow-sm transition hover:bg-[#F9FAFB]"
                 >
                   <Upload size={17} />
@@ -200,10 +239,13 @@ export default function DashboardShell() {
 
                 <button
                   type="button"
+                  onClick={() =>
+                    navigate("/analytics")
+                  }
                   className="flex h-11 items-center justify-center gap-2 rounded-xl bg-[#3157F6] px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2949D9]"
                 >
                   <Bot size={17} />
-                  Ask BizDoctor
+                  Open Analytics
                 </button>
               </div>
             </section>
@@ -244,12 +286,16 @@ export default function DashboardShell() {
                     </p>
 
                     <p className="mt-1 text-sm text-[#667085]">
-                      Three areas currently require attention.
+                      Three areas currently require
+                      attention.
                     </p>
                   </div>
 
                   <button
                     type="button"
+                    onClick={() =>
+                      navigate("/analytics")
+                    }
                     className="flex items-center gap-1 text-sm font-semibold text-[#3157F6]"
                   >
                     View analysis
@@ -270,7 +316,8 @@ export default function DashboardShell() {
                       </p>
 
                       <h2 className="mt-3 max-w-md text-xl font-semibold tracking-[-0.025em]">
-                        Your strongest opportunity is inventory optimization.
+                        Your strongest opportunity is
+                        inventory optimization.
                       </h2>
                     </div>
 
@@ -280,12 +327,17 @@ export default function DashboardShell() {
                   </div>
 
                   <p className="mt-4 max-w-xl text-sm leading-6 text-white/65">
-                    Several high-demand products are approaching low stock while
-                    capital remains tied up in slower-moving inventory.
+                    Several high-demand products are
+                    approaching low stock while capital
+                    remains tied up in slower-moving
+                    inventory.
                   </p>
 
                   <button
                     type="button"
+                    onClick={() =>
+                      navigate("/analytics")
+                    }
                     className="mt-6 flex items-center gap-2 text-sm font-semibold text-white"
                   >
                     Explore recommendation
@@ -336,7 +388,8 @@ export default function DashboardShell() {
                     </h2>
 
                     <p className="mt-1 text-sm text-[#667085]">
-                      Revenue performance across your business
+                      Revenue performance across your
+                      business
                     </p>
                   </div>
 
@@ -361,9 +414,20 @@ export default function DashboardShell() {
                     </p>
 
                     <p className="mt-1 text-xs leading-5 text-[#667085]">
-                      Your interactive revenue chart will appear here after
-                      business data is uploaded.
+                      Your interactive revenue chart
+                      will appear here after business
+                      data is uploaded.
                     </p>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigate("/upload")
+                      }
+                      className="mt-4 text-xs font-semibold text-[#3157F6]"
+                    >
+                      Upload your data
+                    </button>
                   </div>
                 </div>
               </div>
@@ -407,6 +471,9 @@ export default function DashboardShell() {
 
                 <button
                   type="button"
+                  onClick={() =>
+                    navigate("/analytics")
+                  }
                   className="mt-5 flex items-center gap-2 text-sm font-semibold text-[#3157F6]"
                 >
                   View all insights
@@ -421,11 +488,22 @@ export default function DashboardShell() {
   );
 }
 
-function Sidebar() {
+/**
+ * Sidebar navigation.
+ */
+function Sidebar({
+  onNavigate,
+}: {
+  onNavigate: (href: string) => void;
+}) {
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex h-[72px] items-center border-b border-[#E4E7EC] px-6">
-        <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => onNavigate("/")}
+          className="flex items-center gap-3 text-left"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3157F6] text-white shadow-sm">
             <Activity size={21} />
           </div>
@@ -439,7 +517,7 @@ function Sidebar() {
               AI Business Health
             </p>
           </div>
-        </div>
+        </button>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 py-5">
@@ -455,17 +533,35 @@ function Sidebar() {
               <button
                 key={item.label}
                 type="button"
+                onClick={() =>
+                  onNavigate(item.href)
+                }
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
-                  item.active
+                  item.label === "Overview"
                     ? "bg-[#EEF2FF] text-[#3157F6]"
                     : "text-[#475467] hover:bg-[#F9FAFB] hover:text-[#101828]"
                 }`}
               >
                 <Icon size={18} />
+
                 {item.label}
               </button>
             );
           })}
+        </div>
+
+        {/* Upload dataset shortcut */}
+        <div className="mt-6 border-t border-[#E4E7EC] pt-5">
+          <button
+            type="button"
+            onClick={() =>
+              onNavigate("/upload")
+            }
+            className="flex w-full items-center gap-3 rounded-xl bg-[#3157F6] px-3 py-3 text-left text-sm font-semibold text-white shadow-sm transition hover:bg-[#2949D9]"
+          >
+            <Upload size={18} />
+            Upload Dataset
+          </button>
         </div>
       </nav>
 
@@ -486,6 +582,9 @@ function Sidebar() {
   );
 }
 
+/**
+ * KPI metric card.
+ */
 function MetricCard({
   label,
   value,
@@ -505,7 +604,9 @@ function MetricCard({
         </span>
       </div>
 
-      <p className="mt-5 text-sm font-medium text-[#667085]">{label}</p>
+      <p className="mt-5 text-sm font-medium text-[#667085]">
+        {label}
+      </p>
 
       <p className="mt-1 text-2xl font-semibold tracking-[-0.035em] text-[#101828]">
         {value}
@@ -514,6 +615,9 @@ function MetricCard({
   );
 }
 
+/**
+ * Business alert card.
+ */
 function AlertCard({
   title,
   description,
@@ -524,10 +628,12 @@ function AlertCard({
       container: "bg-[#FFFAEB]",
       icon: "bg-[#FEF0C7] text-[#DC6803]",
     },
+
     danger: {
       container: "bg-[#FEF3F2]",
       icon: "bg-[#FEE4E2] text-[#D92D20]",
     },
+
     success: {
       container: "bg-[#ECFDF3]",
       icon: "bg-[#D1FADF] text-[#039855]",
@@ -537,7 +643,9 @@ function AlertCard({
   const currentStyle = styles[type];
 
   return (
-    <div className={`rounded-xl p-4 ${currentStyle.container}`}>
+    <div
+      className={`rounded-xl p-4 ${currentStyle.container}`}
+    >
       <div className="flex gap-3">
         <div
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${currentStyle.icon}`}
@@ -546,7 +654,9 @@ function AlertCard({
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-[#344054]">{title}</p>
+          <p className="text-sm font-semibold text-[#344054]">
+            {title}
+          </p>
 
           <p className="mt-1 text-xs leading-5 text-[#667085]">
             {description}

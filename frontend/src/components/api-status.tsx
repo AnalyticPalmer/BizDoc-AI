@@ -1,67 +1,83 @@
+/**
+ * BizDoctor AI API Status
+ *
+ * Displays the current connection status between the
+ * frontend and the FastAPI backend.
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";
 
-import { getApiHealth } from "@/lib/api";
+import { checkHealth } from "@/lib/api";
 
-type ApiStatus = "checking" | "online" | "offline";
+/* -------------------------------------------------------------------------- */
+/*                              TYPES                                         */
+/* -------------------------------------------------------------------------- */
+
+type ApiStatus =
+  | "checking"
+  | "online"
+  | "offline";
+
+/* -------------------------------------------------------------------------- */
+/*                              COMPONENT                                     */
+/* -------------------------------------------------------------------------- */
 
 export default function ApiStatus() {
-  const [status, setStatus] = useState<ApiStatus>("checking");
+  const [status, setStatus] =
+    useState<ApiStatus>("checking");
 
   useEffect(() => {
-    let active = true;
+    let mounted = true;
 
-    async function checkApi() {
+    const checkApiStatus = async () => {
       try {
-        await getApiHealth();
+        await checkHealth();
 
-        if (active) {
+        if (mounted) {
           setStatus("online");
         }
-      } catch (error) {
-        console.error("BizDoctor API connection failed:", error);
-
-        if (active) {
+      } catch {
+        if (mounted) {
           setStatus("offline");
         }
       }
-    }
+    };
 
-    checkApi();
+    checkApiStatus();
 
     return () => {
-      active = false;
+      mounted = false;
     };
   }, []);
 
-  const config = {
-    checking: {
-      text: "Checking API",
-      dot: "bg-amber-500",
-      textColor: "text-amber-700",
-      background: "bg-amber-50",
-    },
-    online: {
-      text: "API Connected",
-      dot: "bg-emerald-500",
-      textColor: "text-emerald-700",
-      background: "bg-emerald-50",
-    },
-    offline: {
-      text: "API Offline",
-      dot: "bg-red-500",
-      textColor: "text-red-700",
-      background: "bg-red-50",
-    },
-  }[status];
+  /* ------------------------------------------------------------------------ */
+  /*                              RENDER                                      */
+  /* ------------------------------------------------------------------------ */
+
+  if (status === "checking") {
+    return (
+      <div className="flex items-center gap-2 text-xs text-slate-500">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-slate-400" />
+        <span>Checking API...</span>
+      </div>
+    );
+  }
+
+  if (status === "online") {
+    return (
+      <div className="flex items-center gap-2 text-xs text-emerald-600">
+        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+        <span>API Online</span>
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${config.background} ${config.textColor}`}
-    >
-      <span className={`h-2.5 w-2.5 rounded-full ${config.dot}`} />
-      {config.text}
+    <div className="flex items-center gap-2 text-xs text-red-600">
+      <span className="h-2 w-2 rounded-full bg-red-500" />
+      <span>API Offline</span>
     </div>
   );
 }

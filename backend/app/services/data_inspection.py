@@ -12,6 +12,7 @@ from fastapi import (
 )
 
 from app.services.column_mapper import ColumnMapper
+from app.services.dataset_store import DatasetStore
 
 
 ALLOWED_EXTENSIONS = {
@@ -31,6 +32,15 @@ class DataInspectionService:
         file: UploadFile,
         requested_sheet: str | None = None,
     ) -> dict[str, Any]:
+        """
+        Read, prepare, inspect, and temporarily store the
+        complete uploaded dataset.
+
+        The complete DataFrame is stored so later analysis
+        can operate on the customer's full dataset rather
+        than only the preview rows returned to the frontend.
+        """
+
         filename = (
             DataInspectionService._validate_filename(
                 file
@@ -114,6 +124,13 @@ class DataInspectionService:
             )
         )
 
+        # Store the complete cleaned dataset before creating
+        # the preview. The preview is only for the frontend UI;
+        # analysis will later use this complete stored DataFrame.
+        dataset_id = DatasetStore.save(
+            dataframe
+        )
+
         columns = dataframe.columns.tolist()
 
         column_matches = ColumnMapper.map_columns(
@@ -151,6 +168,7 @@ class DataInspectionService:
         ]
 
         return {
+            "dataset_id": dataset_id,
             "filename": filename,
             "file_type": (
                 extension.removeprefix(".")

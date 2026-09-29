@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
+import AppNavigation from "@/components/navigation/app-navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +33,14 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <AppNavigation />
+
+        <main className="min-h-screen lg:pl-64">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
+
